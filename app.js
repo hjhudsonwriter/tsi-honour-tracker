@@ -26,14 +26,14 @@ const temples = [
 // The others will still use the universal clan effects until you add their custom modifiers.
 const clans = [
   { id: "blackstone", name: "Clan Blackstone", icon: "🛡️🐻", alignedTemple: "telluria", hasModifiers: true },
+  { id: "bacca",      name: "Clan Bacca",      icon: "🛡️🦁", alignedTemple: "telluria", hasModifiers: false }, // mountain lion crest
   { id: "farmer",     name: "Clan Farmer",     icon: "🛡️🐂", alignedTemple: "aurush",   hasModifiers: true },
+  { id: "slade",      name: "Clan Slade",      icon: "🛡️🦄", alignedTemple: "telluria", hasModifiers: false },
+  { id: "molten",     name: "Clan Molten",     icon: "🛡️🦅", alignedTemple: "aurush",   hasModifiers: false },
+  { id: "karr",       name: "Clan Karr",       icon: "🛡️🐐", alignedTemple: "pelagos",  hasModifiers: false },
   { id: "rowthorn",   name: "Clan Rowthorn",   icon: "🛡️🐉", alignedTemple: "pelagos",  hasModifiers: true },
-
-  // Extra placeholders to match your sheet look (rename/replace anytime)
-  { id: "silvergoat", name: "Clan Silvergoat", icon: "🛡️🐐", alignedTemple: "pelagos",  hasModifiers: false },
-  { id: "phoenix",    name: "Clan Phoenix",    icon: "🛡️🦅", alignedTemple: "aurush",   hasModifiers: false },
-  { id: "unicorn",    name: "Clan Unicorn",    icon: "🛡️🦄", alignedTemple: "telluria", hasModifiers: false },
 ];
+
 
 /* ---------------------------
    2) RULES (from your reference doc)
