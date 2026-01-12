@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="theme-color" content="#0e0f12" />
+  <title>Scarlett Isles • Honour & Respect</title>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <div class="brandTitle">Honour & Respect</div>
+      <div class="brandSub">Scarlett Isles • Digital Tracker</div>
+    </div>
+
+    <div class="topbarActions">
+      <button class="btn ghost" id="btnReset">Reset</button>
+      <button class="btn" id="btnExport">Export JSON</button>
+      <label class="btn ghost fileBtn">
+        Import JSON
+        <input id="importFile" type="file" accept="application/json" hidden />
+      </label>
+    </div>
+  </header>
+
+  <main class="shell">
+    <section class="panel">
+      <div class="panelHead">
+        <h2>The Clans</h2>
+        <p>Slide to update. Effects update instantly (and are saved automatically).</p>
+      </div>
+      <div class="panelBody" id="clansWrap"></div>
+    </section>
+
+    <section class="panel">
+      <div class="panelHead">
+        <h2>The Temples</h2>
+        <p>Standing runs −3 to +3. Temple boons/banes stack with clan effects.</p>
+      </div>
+      <div class="panelBody" id="templesWrap"></div>
+    </section>
+
+    <section class="panel">
+      <div class="panelHead">
+        <h2>Notable Occurrences</h2>
+        <p>Quick campaign log for what caused changes.</p>
+      </div>
+      <div class="panelBody">
+        <textarea id="globalNotes" class="bigNotes" placeholder="Write notable occurrences here..."></textarea>
+        <div class="hintRow">
+          <div class="hint">Tip: This also saves automatically.</div>
+          <div class="pill" id="savePill">Saved</div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="./app.js"></script>
+</body>
+</html>
