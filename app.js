@@ -26,7 +26,7 @@ const temples = [
 // The others will still use the universal clan effects until you add their custom modifiers.
 const clans = [
   { id: "blackstone", name: "Clan Blackstone", icon: "🛡️🐻", alignedTemple: "telluria", hasModifiers: true },
-  { id: "bacca",      name: "Clan Bacca",      icon: "🛡️🦁", alignedTemple: "telluria", hasModifiers: false }, // mountain lion crest
+  { id: "bacca",      name: "Clan Bacca",      icon: "🛡️🦁", alignedTemple: "telluria", hasModifiers: false },
   { id: "farmer",     name: "Clan Farmer",     icon: "🛡️🐂", alignedTemple: "aurush",   hasModifiers: true },
   { id: "slade",      name: "Clan Slade",      icon: "🛡️🦄", alignedTemple: "telluria", hasModifiers: false },
   { id: "molten",     name: "Clan Molten",     icon: "🛡️🦅", alignedTemple: "aurush",   hasModifiers: false },
