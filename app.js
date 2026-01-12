@@ -402,4 +402,271 @@ function renderClans(){
     const head = document.createElement("div");
     head.className = "cardHead";
 
-    const left = document.
+    const left = document.createElement("div");
+    left.className = "faction";
+
+    const icon = document.createElement("div");
+    icon.className = "icon";
+    icon.textContent = clan.icon;
+
+    const text = document.createElement("div");
+    text.className = "factionText";
+    text.innerHTML = `
+      <div class="factionName">${escapeHtml(clan.name)}</div>
+      <div class="factionMeta">Aligned: ${escapeHtml(templeName)} • Status: ${escapeHtml(status)}</div>
+    `;
+
+    left.appendChild(icon);
+    left.appendChild(text);
+
+    const pill = document.createElement("div");
+    pill.className = "pill" + (score < 0 ? " bad" : "");
+    pill.textContent = `Score: ${score}`;
+
+    head.appendChild(left);
+    head.appendChild(pill);
+
+    // Slider row
+    const grid = document.createElement("div");
+    grid.className = "grid";
+
+    const sRow = document.createElement("div");
+    sRow.className = "sliderRow";
+
+    const lab = document.createElement("label");
+    lab.textContent = "Honour";
+
+    const range = document.createElement("input");
+    range.type = "range";
+    range.min = "-5";
+    range.max = "5";
+    range.step = "1";
+    range.value = String(score);
+
+    const scoreBox = document.createElement("div");
+    scoreBox.className = "scoreBox";
+    scoreBox.textContent = String(score);
+
+    range.addEventListener("input", () => {
+      const next = clamp(Number(range.value), -5, 5);
+      scoreBox.textContent = String(next);
+      state.clanScores[clan.id] = next;
+      saveState();
+      // re-render this card to refresh effects/status
+      renderClans();
+    });
+
+    sRow.appendChild(lab);
+    sRow.appendChild(range);
+    sRow.appendChild(scoreBox);
+
+    // Effects
+    const effectsWrap = document.createElement("div");
+    effectsWrap.className = "effects";
+
+    const h = document.createElement("h4");
+    h.textContent = "Active Effects";
+
+    const ul = document.createElement("ul");
+    const effects = getClanActiveEffects(clan.id, score);
+    effects.forEach(eff => {
+      const li = document.createElement("li");
+      li.textContent = eff;
+      ul.appendChild(li);
+    });
+
+    // Notes
+    const notes = document.createElement("textarea");
+    notes.className = "smallNotes";
+    notes.placeholder = "Notes: why did this change?";
+    notes.value = state.clanNotes[clan.id] || "";
+    notes.addEventListener("input", () => {
+      state.clanNotes[clan.id] = notes.value;
+      saveState();
+    });
+
+    effectsWrap.appendChild(h);
+    effectsWrap.appendChild(ul);
+
+    grid.appendChild(sRow);
+    grid.appendChild(effectsWrap);
+    grid.appendChild(notes);
+
+    card.appendChild(head);
+    card.appendChild(grid);
+
+    wrap.appendChild(card);
+  });
+}
+
+function renderTemples(){
+  const wrap = el("templesWrap");
+  wrap.innerHTML = "";
+
+  temples.forEach(t => {
+    const score = clamp(Number(state.templeScores[t.id] ?? 0), -3, 3);
+    const status = getTempleStatus(score);
+
+    const card = document.createElement("div");
+    card.className = "card";
+
+    const head = document.createElement("div");
+    head.className = "cardHead";
+
+    const left = document.createElement("div");
+    left.className = "faction";
+
+    const icon = document.createElement("div");
+    icon.className = "icon";
+    icon.textContent = t.icon;
+
+    const text = document.createElement("div");
+    text.className = "factionText";
+    text.innerHTML = `
+      <div class="factionName">${escapeHtml(t.name)}</div>
+      <div class="factionMeta">Status: ${escapeHtml(status)}</div>
+    `;
+
+    left.appendChild(icon);
+    left.appendChild(text);
+
+    const pill = document.createElement("div");
+    pill.className = "pill" + (score < 0 ? " bad" : "");
+    pill.textContent = `Score: ${score}`;
+
+    head.appendChild(left);
+    head.appendChild(pill);
+
+    const grid = document.createElement("div");
+    grid.className = "grid";
+
+    const sRow = document.createElement("div");
+    sRow.className = "sliderRow";
+
+    const lab = document.createElement("label");
+    lab.textContent = "Standing";
+
+    const range = document.createElement("input");
+    range.type = "range";
+    range.min = "-3";
+    range.max = "3";
+    range.step = "1";
+    range.value = String(score);
+
+    const scoreBox = document.createElement("div");
+    scoreBox.className = "scoreBox";
+    scoreBox.textContent = String(score);
+
+    range.addEventListener("input", () => {
+      const next = clamp(Number(range.value), -3, 3);
+      scoreBox.textContent = String(next);
+      state.templeScores[t.id] = next;
+      saveState();
+      renderTemples();
+    });
+
+    sRow.appendChild(lab);
+    sRow.appendChild(range);
+    sRow.appendChild(scoreBox);
+
+    const effectsWrap = document.createElement("div");
+    effectsWrap.className = "effects";
+
+    const h = document.createElement("h4");
+    h.textContent = "Active Effects";
+
+    const ul = document.createElement("ul");
+    const effects = getTempleActiveEffects(t.id, score);
+    effects.forEach(eff => {
+      const li = document.createElement("li");
+      li.textContent = eff;
+      ul.appendChild(li);
+    });
+
+    const notes = document.createElement("textarea");
+    notes.className = "smallNotes";
+    notes.placeholder = "Notes: vows, offerings, sins, blessings...";
+    notes.value = state.templeNotes[t.id] || "";
+    notes.addEventListener("input", () => {
+      state.templeNotes[t.id] = notes.value;
+      saveState();
+    });
+
+    effectsWrap.appendChild(h);
+    effectsWrap.appendChild(ul);
+
+    grid.appendChild(sRow);
+    grid.appendChild(effectsWrap);
+    grid.appendChild(notes);
+
+    card.appendChild(head);
+    card.appendChild(grid);
+
+    wrap.appendChild(card);
+  });
+}
+
+function escapeHtml(str){
+  return String(str)
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#039;");
+}
+
+/* ---------------------------
+   6) EXPORT / IMPORT / RESET
+---------------------------- */
+
+el("btnReset").addEventListener("click", () => {
+  if(!confirm("Reset all scores + notes on this device?")) return;
+  localStorage.removeItem(STORAGE_KEY);
+  location.reload();
+});
+
+el("btnExport").addEventListener("click", () => {
+  const blob = new Blob([JSON.stringify(state, null, 2)], { type:"application/json" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = `scarlett-honour-tracker-${new Date().toISOString().slice(0,10)}.json`;
+  a.click();
+  URL.revokeObjectURL(a.href);
+});
+
+el("importFile").addEventListener("change", async () => {
+  const file = el("importFile").files?.[0];
+  if(!file) return;
+
+  try{
+    const text = await file.text();
+    const parsed = JSON.parse(text);
+
+    // shallow validate
+    if(!parsed || typeof parsed !== "object") throw new Error("Invalid JSON");
+
+    // merge into default to ensure missing keys don’t break anything
+    const next = defaultState();
+    Object.assign(next, parsed);
+
+    // clamp safety
+    clans.forEach(c => next.clanScores[c.id] = clamp(Number(next.clanScores[c.id] ?? 0), -5, 5));
+    temples.forEach(t => next.templeScores[t.id] = clamp(Number(next.templeScores[t.id] ?? 0), -3, 3));
+
+    Object.assign(state, next);
+    saveState();
+    render();
+    alert("Imported successfully.");
+  }catch(e){
+    console.error(e);
+    alert("Import failed. Make sure you’re importing a JSON file exported from this app.");
+  }finally{
+    el("importFile").value = "";
+  }
+});
+
+/* ---------------------------
+   7) BOOT
+---------------------------- */
+
+render();
