@@ -32,6 +32,24 @@ body{
     var(--bg);
 }
 
+body::before{
+  content:"";
+  position: fixed;
+  inset: 0;
+  background-image: url("./assets/T.S.I%20Logo.png");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: min(900px, 70vw);
+  opacity: 0.10;              /* adjust 0.06–0.16 to taste */
+  pointer-events: none;
+  z-index: 0;
+}
+
+.topbar, .shell{
+  position: relative;
+  z-index: 1;                 /* keeps panels above the logo */
+}
+
 /* Topbar */
 .topbar{
   position: sticky;
@@ -173,6 +191,13 @@ body{
   border: 1px solid rgba(255,255,255,.10);
   flex: 0 0 auto;
   font-size: 22px;
+}
+
+.crest{
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border-radius: 12px;
 }
 
 .factionText{ min-width:0; }
