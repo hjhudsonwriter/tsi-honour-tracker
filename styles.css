@@ -36,7 +36,7 @@ body::before{
   content:"";
   position: fixed;
   inset: 0;
-  background-image: url("assets/icons/tsi-logo.png");
+  background-image: url("assets/icons/tsi-logo.png?v=2");
   background-repeat: no-repeat;
   background-position: center;
   background-size: min(900px, 70vw);
@@ -180,18 +180,16 @@ body::before{
 }
 
 .icon{
-  width: 44px;
-  height: 44px;
+  width: 52px;
+  height: 52px;
   border-radius: 14px;
-  display:grid;
-  place-items:center;
-  background:
-    radial-gradient(20px 20px at 30% 30%, rgba(201,162,39,.18), transparent 60%),
-    rgba(255,255,255,.06);
-  border: 1px solid rgba(255,255,255,.10);
-  flex: 0 0 auto;
-  font-size: 22px;
+  display: grid;
+  place-items: center;
   overflow: hidden;
+
+  border: 1px solid rgba(255,255,255,.10);
+  background: rgba(255,255,255,.04);
+  flex: 0 0 52px;
 }
 
 .crest{
@@ -375,4 +373,27 @@ input[type="range"]{
 .effectTag[data-cat*="BOON"]{
   border-color: rgba(226,193,90,.40);
   background: rgba(226,193,90,.12);
+}
+.faction{
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  min-width: 0;
+}
+
+.factionText{
+  min-width: 0;
+}
+
+.factionName{
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.factionMeta{
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  opacity: .85;
 }
