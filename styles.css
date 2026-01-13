@@ -36,11 +36,11 @@ body::before{
   content:"";
   position: fixed;
   inset: 0;
-  background-image: url("./assets/T.S.I%20Logo.png");
+  background-image: url("assets/icons/tsi-logo.png");
   background-repeat: no-repeat;
   background-position: center;
   background-size: min(900px, 70vw);
-  opacity: 0.10;              /* adjust 0.06–0.16 to taste */
+  opacity: 0.10;
   pointer-events: none;
   z-index: 0;
 }
