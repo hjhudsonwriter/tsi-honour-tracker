@@ -440,7 +440,40 @@ function render(){
     g.oninput = () => { state.globalNotes = g.value; saveState(); };
   }
 }
+function buildEffectsUI(effects){
+  const wrap = document.createElement("div");
+  wrap.className = "effectsList";
 
+  effects.forEach(line => {
+    const row = document.createElement("div");
+    row.className = "effectRow";
+
+    // Split "CATEGORY: text" into badge + text
+    const idx = line.indexOf(":");
+    let cat = "EFFECT";
+    let text = line;
+
+    if(idx > -1){
+      cat = line.slice(0, idx).trim();
+      text = line.slice(idx + 1).trim();
+    }
+
+    const tag = document.createElement("div");
+    tag.className = "effectTag";
+    tag.dataset.cat = cat;
+    tag.textContent = cat;
+
+    const body = document.createElement("div");
+    body.className = "effectText";
+    body.textContent = text;
+
+    row.appendChild(tag);
+    row.appendChild(body);
+    wrap.appendChild(row);
+  });
+
+  return wrap;
+}
 function renderClans(){
   const wrap = el("clansWrap");
   wrap.innerHTML = "";
@@ -522,13 +555,9 @@ function renderClans(){
     const h = document.createElement("h4");
     h.textContent = "Active Effects";
 
-    const ul = document.createElement("ul");
     const effects = getClanActiveEffects(clan.id, score);
-    effects.forEach(eff => {
-      const li = document.createElement("li");
-      li.textContent = eff;
-      ul.appendChild(li);
-    });
+effectsWrap.appendChild(buildEffectsUI(effects));
+
 
     // Notes
     const notes = document.createElement("textarea");
@@ -541,7 +570,6 @@ function renderClans(){
     });
 
     effectsWrap.appendChild(h);
-    effectsWrap.appendChild(ul);
 
     grid.appendChild(sRow);
     grid.appendChild(effectsWrap);
@@ -630,13 +658,8 @@ function renderTemples(){
     const h = document.createElement("h4");
     h.textContent = "Active Effects";
 
-    const ul = document.createElement("ul");
     const effects = getTempleActiveEffects(t.id, score);
-    effects.forEach(eff => {
-      const li = document.createElement("li");
-      li.textContent = eff;
-      ul.appendChild(li);
-    });
+effectsWrap.appendChild(buildEffectsUI(effects));
 
     const notes = document.createElement("textarea");
     notes.className = "smallNotes";
@@ -648,7 +671,6 @@ function renderTemples(){
     });
 
     effectsWrap.appendChild(h);
-    effectsWrap.appendChild(ul);
 
     grid.appendChild(sRow);
     grid.appendChild(effectsWrap);
