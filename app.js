@@ -7,6 +7,8 @@
 
 const STORAGE_KEY = "scarlettHonourTracker.v1";
 
+const ASSET_VER = "v2";
+
 const el = (id) => document.getElementById(id);
 const clamp = (n, min, max) => Math.max(min, Math.min(max, n));
 
@@ -25,15 +27,14 @@ const temples = [
 // IMPORTANT: only 3 clans have extra rules in your doc (Blackstone/Farmer/Rowthorn).
 // The others will still use the universal clan effects until you add their custom modifiers.
 const clans = [
-  { id: "blackstone", name: "Clan Blackstone", alignedTemple: "telluria", hasModifiers: true,  iconImg: "assets/icons/BlackstoneSigil.png" },
-  { id: "bacca",      name: "Clan Bacca",      alignedTemple: "telluria", hasModifiers: false, iconImg: "assets/icons/BaccaSigil.png" },
-  { id: "farmer",     name: "Clan Farmer",     alignedTemple: "aurush",   hasModifiers: true,  iconImg: "assets/icons/FarmerSigil.png" },
-  { id: "slade",      name: "Clan Slade",      alignedTemple: "telluria", hasModifiers: false, iconImg: "assets/icons/SladeSigil.png" },
-  { id: "molten",     name: "Clan Molten",     alignedTemple: "aurush",   hasModifiers: false, iconImg: "assets/icons/MoltenSigil.png" },
-  { id: "karr",       name: "Clan Karr",       alignedTemple: "pelagos",  hasModifiers: false, iconImg: "assets/icons/KarrSigil.png" },
-  { id: "rowthorn",   name: "Clan Rowthorn",   alignedTemple: "pelagos",  hasModifiers: true,  iconImg: "assets/icons/RowthornSigil.png" },
+  { id: "blackstone", name: "Clan Blackstone", alignedTemple: "telluria", hasModifiers: true,  iconImg: `assets/icons/BlackstoneSigil.png?v=${ASSET_VER}` },
+  { id: "bacca",      name: "Clan Bacca",      alignedTemple: "telluria", hasModifiers: false, iconImg: `assets/icons/BaccaSigil.png?v=${ASSET_VER}` },
+  { id: "farmer",     name: "Clan Farmer",     alignedTemple: "aurush",   hasModifiers: true,  iconImg: `assets/icons/FarmerSigil.png?v=${ASSET_VER}` },
+  { id: "slade",      name: "Clan Slade",      alignedTemple: "telluria", hasModifiers: false, iconImg: `assets/icons/SladeSigil.png?v=${ASSET_VER}` },
+  { id: "molten",     name: "Clan Molten",     alignedTemple: "aurush",   hasModifiers: false, iconImg: `assets/icons/MoltenSigil.png?v=${ASSET_VER}` },
+  { id: "karr",       name: "Clan Karr",       alignedTemple: "pelagos",  hasModifiers: false, iconImg: `assets/icons/KarrSigil.png?v=${ASSET_VER}` },
+  { id: "rowthorn",   name: "Clan Rowthorn",   alignedTemple: "pelagos",  hasModifiers: true,  iconImg: `assets/icons/RowthornSigil.png?v=${ASSET_VER}` },
 ];
-
 
 /* ---------------------------
    2) RULES (SIMPLIFIED CANON)
