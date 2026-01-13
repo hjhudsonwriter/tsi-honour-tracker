@@ -25,13 +25,13 @@ const temples = [
 // IMPORTANT: only 3 clans have extra rules in your doc (Blackstone/Farmer/Rowthorn).
 // The others will still use the universal clan effects until you add their custom modifiers.
 const clans = [
-  { id: "blackstone", name: "Clan Blackstone", alignedTemple: "telluria", hasModifiers: true,  iconImg: "assets/Blackstone%20Sigil.png" },
-  { id: "bacca",      name: "Clan Bacca",      alignedTemple: "telluria", hasModifiers: false, iconImg: "assets/Bacca%20Sigil.png" },
-  { id: "farmer",     name: "Clan Farmer",     alignedTemple: "aurush",   hasModifiers: true,  iconImg: "assets/Farmer%20Sigil.png" },
-  { id: "slade",      name: "Clan Slade",      alignedTemple: "telluria", hasModifiers: false, iconImg: "assets/Slade%20Sigil.png" },
-  { id: "molten",     name: "Clan Molten",     alignedTemple: "aurush",   hasModifiers: false, iconImg: "assets/Molten%20Sigil.png" },
-  { id: "karr",       name: "Clan Karr",       alignedTemple: "pelagos",  hasModifiers: false, iconImg: "assets/Karr%20Sigil.png" },
-  { id: "rowthorn",   name: "Clan Rowthorn",   alignedTemple: "pelagos",  hasModifiers: true,  iconImg: "assets/Rowthorn%20Sigil.png" },
+  { id: "blackstone", name: "Clan Blackstone", alignedTemple: "telluria", hasModifiers: true,  iconImg: "assets/icons/BlackstoneSigil.png" },
+  { id: "bacca",      name: "Clan Bacca",      alignedTemple: "telluria", hasModifiers: false, iconImg: "assets/icons/BaccaSigil.png" },
+  { id: "farmer",     name: "Clan Farmer",     alignedTemple: "aurush",   hasModifiers: true,  iconImg: "assets/icons/FarmerSigil.png" },
+  { id: "slade",      name: "Clan Slade",      alignedTemple: "telluria", hasModifiers: false, iconImg: "assets/icons/SladeSigil.png" },
+  { id: "molten",     name: "Clan Molten",     alignedTemple: "aurush",   hasModifiers: false, iconImg: "assets/icons/MoltenSigil.png" },
+  { id: "karr",       name: "Clan Karr",       alignedTemple: "pelagos",  hasModifiers: false, iconImg: "assets/icons/KarrSigil.png" },
+  { id: "rowthorn",   name: "Clan Rowthorn",   alignedTemple: "pelagos",  hasModifiers: true,  iconImg: "assets/icons/RowthornSigil.png" },
 ];
 
 
