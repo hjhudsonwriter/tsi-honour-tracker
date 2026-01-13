@@ -36,182 +36,239 @@ const clans = [
 
 
 /* ---------------------------
-   2) RULES (from your reference doc)
-   Source-of-truth: Scarlett_Isles_Honour_and_Temple_Standing_Effects.docx :contentReference[oaicite:2]{index=2}
+   2) RULES (SIMPLIFIED CANON)
+   Source-of-truth: Scarlett_Isles_Simplified_Honour_System_FINAL.docx :contentReference[oaicite:1]{index=1}
 ---------------------------- */
 
-// Universal Clan Honour (−5..+5)
+/*
+  IMPORTANT BEHAVIOUR (Banded):
+  Clan scale -5..+5 uses these bands:
+    -5..-4 => HUNTED
+    -3..-2 => HOSTILE
+    -1     => DISTRUSTED
+     0     => NEUTRAL
+    +1..+2 => TRUSTED
+    +3..+4 => ALLIED
+    +5     => SANCTUARY
+
+  Temple scale -3..+3 uses these bands:
+    -3        => ANATHEMA
+    -2..-1    => EXCOMMUNICATE
+     0        => NEUTRAL
+    +1..+2    => BLESSED
+    +3        => CHOSEN
+*/
+
+function clanBand(score){
+  if (score <= -4) return -5;
+  if (score <= -2) return -3;
+  if (score === -1) return -1;
+  if (score === 0) return 0;
+  if (score <= 2) return 1;
+  if (score <= 4) return 3;
+  return 5;
+}
+
+function templeBand(score){
+  if (score <= -3) return -3;
+  if (score <= -1) return -2;
+  if (score === 0) return 0;
+  if (score <= 2) return 1;
+  return 3;
+}
+
+// Universal clan effects by band
 const clanUniversal = {
-  "-5": { status: "WANTED", effects: [
-    "ENFORCEMENT: Kill/capture order; bounty posted.",
-    "ACCESS: Barred from clan lands/facilities.",
-    "SOCIAL: Automatic hostile reactions."
-  ]},
-  "-4": { status: "HUNTED", effects: [
-    "ENFORCEMENT: Patrols stop/search; detain if possible.",
-    "PRICES: +100% with clan merchants.",
-    "TRAVEL: Safe routes withheld; false leads likely."
-  ]},
-  "-3": { status: "HOSTILE", effects: [
-    "SOCIAL: Disadvantage on checks with clan members.",
-    "ACCESS: No audience with leaders.",
-    "AID: Refused except under duress."
-  ]},
-  "-2": { status: "DISTRUSTED", effects: [
-    "PRICES: +50% in clan-controlled markets.",
-    "INTEL: Partial truths; key facts gated behind proof.",
-    "LEGAL: Treated as suspects in disputes."
-  ]},
-  "-1": { status: "SUSPICIOUS", effects: [
-    "SOCIAL: Normal DCs but attitude is wary.",
-    "ACCESS: Public areas only.",
-    "INTEL: Rumours only, no documents."
-  ]},
-  "0": { status: "NEUTRAL", effects: [
-    "SOCIAL: Normal DCs.",
-    "PRICES: Standard.",
-    "ACCESS: Public services only."
-  ]},
-  "1": { status: "TRUSTED", effects: [
-    "ACCESS: Limited restricted access (guarded halls, clan quarter entry).",
-    "SOCIAL: Advantage on 1 social check/day with clan members.",
-    "AID: Basic supplies or shelter when reasonable."
-  ]},
-  "2": { status: "ALLIED", effects: [
-    "BACKUP: 1d4 militia/guards available once per arc (DM discretion).",
-    "INTEL: Maps, records, names, and actionable leads.",
-    "LEGAL: Clan vouches for the party (reduced scrutiny)."
-  ]},
-  "3": { status: "FAVOURED", effects: [
-    "AID: Free basic lodging in clan territory.",
-    "PRICES: −20% with clan merchants/crafters.",
-    "ACCESS: Audience with senior officer or emissary on request."
-  ]},
-  "4": { status: "CHAMPIONS", effects: [
-    "BACKUP: 2d4 militia/elite escort once per arc.",
-    "LEGAL: Clan writ grants temporary authority (advantage on lawful demands).",
-    "BOON: One bespoke clan gift (minor magic item or rare service)."
-  ]},
-  "5": { status: "SWORN FRIENDS", effects: [
-    "SANCTUARY: Safe haven even when pursued.",
-    "ACCESS: Direct access to leadership; guarded secrets shared.",
-    "BACKUP: Clan will take political heat to protect the party; reinforcements can arrive in major set-pieces."
-  ]},
+  "-5": {
+    status: "HUNTED",
+    effects: [
+      "ECONOMY: No trade.",
+      "FACTION SOCIAL: Hostile.",
+      "LOCAL NPC SOCIAL: Refuse aid.",
+      "ACCESS & MOVEMENT: On-sight hostility.",
+    ],
+  },
+  "-3": {
+    status: "HOSTILE",
+    effects: [
+      "ECONOMY: +50% prices.",
+      "FACTION SOCIAL: Disadvantage.",
+      "LOCAL NPC SOCIAL: Fearful.",
+      "ACCESS & MOVEMENT: Escorted / denied.",
+    ],
+  },
+  "-1": {
+    status: "DISTRUSTED",
+    effects: [
+      "ECONOMY: +20% prices.",
+      "FACTION SOCIAL: Cold, higher DCs.",
+      "LOCAL NPC SOCIAL: Wary.",
+      "ACCESS & MOVEMENT: Public areas only.",
+    ],
+  },
+  "0": {
+    status: "NEUTRAL",
+    effects: [
+      "ECONOMY: Standard.",
+      "FACTION SOCIAL: Normal.",
+      "LOCAL NPC SOCIAL: Neutral.",
+      "ACCESS & MOVEMENT: Public access.",
+    ],
+  },
+  "1": {
+    status: "TRUSTED",
+    effects: [
+      "ECONOMY: −10% prices.",
+      "FACTION SOCIAL: Advantage once/day.",
+      "LOCAL NPC SOCIAL: Helpful.",
+      "ACCESS & MOVEMENT: Limited restricted access.",
+    ],
+  },
+  "3": {
+    status: "ALLIED",
+    effects: [
+      "ECONOMY: −25% prices.",
+      "FACTION SOCIAL: Advantage.",
+      "LOCAL NPC SOCIAL: Supportive.",
+      "ACCESS & MOVEMENT: Free movement.",
+    ],
+  },
+  "5": {
+    status: "SANCTUARY",
+    effects: [
+      "ECONOMY: Favours over coin.",
+      "FACTION SOCIAL: Automatic cooperation.",
+      "LOCAL NPC SOCIAL: Shelter & secrecy.",
+      "ACCESS & MOVEMENT: Safe haven.",
+    ],
+  },
 };
 
-// Clan-specific modifiers (only where your doc defines them)
-const clanModifiers = {
+// Clan-specific boon tracks (ONLY applies in that clan’s territory)
+const clanBoonTracks = {
   blackstone: {
-    // additions at thresholds (both positive and negative)
-    add: {
-      "1": ["Entry to Blackstone Quarters; basic audience access (escorted)."],
-      "2": ["Clan Writ: Advantage on one social check with Wardens/Clan per day; access to maps/records."],
-      "3": ["Warden Escort: one squad guides you through dangerous streets/forest edge once per arc."],
-    },
-    // “at −2 or lower” type notes
-    addIfAtOrBelow: {
-      "-2": ["In Nightwood, random Warden scrutiny escalates (stops, searches, delays)."],
-      "-4": ["Aldric/Chief declares you a destabilising element; detainment attempts begin."],
-    }
+    label: "FACTION BOON (Blackstone)",
+    steps: [
+      { when: (s) => s <= -3, text: "Forest and Wardens resist you; disadvantage on navigation and stealth checks." },
+      { when: (s) => s >= 1,  text: "Advantage on one Survival or Perception check per session." },
+      { when: (s) => s >= 3,  text: "Ignore one instance of difficult terrain caused by roots or forest growth per session." },
+      { when: (s) => s >= 5,  text: "Automatically avoid one patrol or environmental complication per session." },
+    ],
   },
-
+  bacca: {
+    label: "FACTION BOON (Bacca)",
+    steps: [
+      { when: (s) => s <= -3, text: "Supplies run short; disadvantage on exhaustion saves in mountainous terrain." },
+      { when: (s) => s >= 1,  text: "Advantage on one Athletics or Constitution check per session." },
+      { when: (s) => s >= 3,  text: "Ignore the first level of exhaustion gained in mountainous terrain." },
+      { when: (s) => s >= 5,  text: "Once per session, treat a failed physical check as a success through grit and endurance." },
+    ],
+  },
+  slade: {
+    label: "FACTION BOON (Slade)",
+    steps: [
+      { when: (s) => s <= -3, text: "Information dries up; disadvantage on Investigation and Insight checks." },
+      { when: (s) => s >= 1,  text: "Advantage on one Investigation or Insight check per session." },
+      { when: (s) => s >= 3,  text: "Once per session, ask the DM for one truthful rumour or warning about local threats." },
+      { when: (s) => s >= 5,  text: "Automatically detect one ambush, deception, or hidden risk before it triggers." },
+    ],
+  },
   farmer: {
-    add: {
-      "1": ["Access to Sunward contacts and formal hearings; minor discounts on sanctioned supplies."],
-      "2": ["Sanctioned Escort: 1d4 Sun-Bearers for one mission (expects strict conduct)."],
-      "3": ["Inquisitorial Seal: advantage on intimidation vs criminals/heretics in clan territory."],
-      "4": ["May provide fire-oil stores, sunblade maintenance, or a minor relic loan (DM discretion)."],
-    },
-    addIfAtOrBelow: {
-      "-3": ["Declared 'complicit': gear searches, interrogations, and refusal of aid."],
-      "-5": ["Cleansing Order: detain/execute if resisting; bounty posted widely."],
-    }
+    label: "FACTION BOON (Farmer)",
+    steps: [
+      { when: (s) => s <= -3, text: "Marked as impure; disadvantage on Deception and Persuasion checks." },
+      { when: (s) => s >= 1,  text: "Advantage on one Intimidation or Persuasion check per session." },
+      { when: (s) => s >= 3,  text: "Once per session, command lesser NPCs to stand down or comply." },
+      { when: (s) => s >= 5,  text: "Treated as an instrument of authority; minor opposition yields without a roll." },
+    ],
   },
-
+  molten: {
+    label: "FACTION BOON (Molten)",
+    steps: [
+      { when: (s) => s <= -3, text: "Trade embargo; disadvantage on checks to acquire goods or services." },
+      { when: (s) => s >= 1,  text: "Advantage on one negotiation or appraisal check per session." },
+      { when: (s) => s >= 3,  text: "Reduce the cost of one major purchase by 50% per session." },
+      { when: (s) => s >= 5,  text: "Once per session, acquire a rare or restricted item without delay." },
+    ],
+  },
   rowthorn: {
-    add: {
-      "1": ["Safe Harbour: basic shelter and discreet resupply in Rowthorn ports."],
-      "2": ["Passage Token: priority ferry/ship passage once per arc; advantage on 1 sea travel check."],
-      "3": ["Tide Intel: accurate forecasts, smuggler routes, and enemy ship movements (where relevant)."],
-    },
-    addIfAtOrBelow: {
-      "-2": ["Stranded: denied passage; prices +50% in coastal markets controlled by Rowthorn."],
-      "-4": ["Marked as 'reckless': captains refuse you, and tide-guard may tail you."],
-    }
-  }
+    label: "FACTION BOON (Rowthorn)",
+    steps: [
+      { when: (s) => s <= -3, text: "Denied passage; disadvantage on travel and navigation checks." },
+      { when: (s) => s >= 1,  text: "Advantage on one Survival or Vehicle (water) check per session." },
+      { when: (s) => s >= 3,  text: "Ignore one sea or coastal travel complication per session." },
+      { when: (s) => s >= 5,  text: "Automatically secure safe passage by sea or river when possible." },
+    ],
+  },
+  karr: {
+    label: "FACTION BOON (Karr)",
+    steps: [
+      { when: (s) => s <= -3, text: "Harsh welcome; disadvantage on cold weather and survival checks." },
+      { when: (s) => s >= 1,  text: "Advantage on one Survival or Intimidation check per session." },
+      { when: (s) => s >= 3,  text: "Ignore one cold, storm, or fatigue-related penalty per session." },
+      { when: (s) => s >= 5,  text: "Once per session, shrug off environmental hardship that would hinder others." },
+    ],
+  },
 };
 
-// Universal Temple Standing (−3..+3)
+// Universal temple effects by band
 const templeUniversal = {
-  "-3": { status: "ANATHEMA", effects: [
-    "RITUALS: No temple services; clerics may refuse healing/resurrection.",
-    "ENFORCEMENT: Temple agents may pursue, expose, or sabotage.",
-    "BANE: Once per session, DM may impose a minor omen complication tied to that deity."
-  ]},
-  "-2": { status: "EXCOMMUNICATE", effects: [
-    "SOCIAL: Disadvantage on checks with temple faithful.",
-    "ACCESS: Barred from inner sanctums.",
-    "RITUALS: Services only at extreme cost or via black-market intermediaries."
-  ]},
-  "-1": { status: "DISFAVOURED", effects: [
-    "SOCIAL: Wary reception; higher DCs (+2).",
-    "RITUALS: Services available but require penance/donation; prices +50%.",
-    "INTEL: Doctrine-only answers, no secrets."
-  ]},
-  "0": { status: "NEUTRAL", effects: [
-    "SOCIAL: Normal DCs.",
-    "RITUALS: Services at standard donation costs.",
-    "ACCESS: Public shrine areas only."
-  ]},
-  "1": { status: "BLESSED", effects: [
-    "RITUALS: Discounts (−20%) on temple services.",
-    "AID: Safe rest within temple grounds where appropriate.",
-    "BOON: 1 minor blessing/token per arc (flavour + small mechanical perk)."
-  ]},
-  "2": { status: "FAVOURED", effects: [
-    "ACCESS: Inner chambers/archives with supervision.",
-    "RITUALS: Priority access to rituals/divinations.",
-    "BOON: 1 'Prayer of Aid' per arc (deity-themed advantage)."
-  ]},
-  "3": { status: "CHOSEN", effects: [
-    "SANCTUARY: Temple protection even under political pressure.",
-    "RITUALS: High rites available (including rare healing) with minimal donation.",
-    "BOON: Once per arc, a major sign or intervention (deity-themed narrative advantage)."
-  ]},
+  "-3": {
+    status: "ANATHEMA",
+    effects: [
+      "ECONOMY (Rituals): No services.",
+      "TEMPLE SOCIAL: Hostile clergy.",
+      "ACCESS & MOVEMENT: Barred / hunted.",
+    ],
+  },
+  "-2": {
+    status: "EXCOMMUNICATE",
+    effects: [
+      "ECONOMY (Rituals): +50% cost.",
+      "TEMPLE SOCIAL: Disadvantage.",
+      "ACCESS & MOVEMENT: Watched access.",
+    ],
+  },
+  "0": {
+    status: "NEUTRAL",
+    effects: [
+      "ECONOMY (Rituals): Standard.",
+      "TEMPLE SOCIAL: Normal.",
+      "ACCESS & MOVEMENT: Public shrines.",
+    ],
+  },
+  "1": {
+    status: "BLESSED",
+    effects: [
+      "ECONOMY (Rituals): −20% cost.",
+      "TEMPLE SOCIAL: Advantage once/day.",
+      "ACCESS & MOVEMENT: Escorted inner access.",
+    ],
+  },
+  "3": {
+    status: "CHOSEN",
+    effects: [
+      "ECONOMY (Rituals): Symbolic offerings.",
+      "TEMPLE SOCIAL: Automatic respect.",
+      "ACCESS & MOVEMENT: Sanctuary.",
+    ],
+  },
 };
 
-// Temple-specific modifiers
-const templeModifiers = {
-  telluria: {
-    add: {
-      "-3": ["Roots Reject You: difficult terrain from roots may 'choose' you first; 1 extra complication per session in Tellurian sites."],
-      "-2": ["No Earth-Salve: you cannot purchase Tellurian salves/charms; priests will not stabilise via sap methods."],
-      "-1": ["Penance Required: services cost +50% and demand a vow or offering."],
-      "1":  ["Grounding Token: 1/arc, advantage on a STR save vs being knocked prone or restrained."],
-      "2":  ["Stone-Safe Passage: 1/arc, ignore one environmental hazard in tunnels/caves (collapse, tremor, difficult terrain)."],
-      "3":  ["Sanctuary of Soil: 1/arc, the party can take a short rest in a dangerous wilderness zone without being interrupted (DM discretion)."],
-    }
-  },
-  aurush: {
-    add: {
-      "-3": ["Condemned: Aurushi agents attempt confiscation of relics; 1/arc a public denunciation increases legal heat in Aurushi lands."],
-      "-2": ["Blinded by Doctrine: disadvantage on Deception vs Aurushi faithful; services refused."],
-      "-1": ["Suspect: services cost +50%; persuasion DCs +2 with Aurushi clergy."],
-      "1":  ["Sunmark Charm: 1/arc, add +1d4 radiant damage to one hit OR gain advantage on one Insight check."],
-      "2":  ["Revelation Rite: 1/arc, temple provides a short divination (one clear clue, DM-approved)."],
-      "3":  ["Shield of Noon: 1/arc, grant one ally resistance to necrotic OR advantage on saves vs fear for one encounter."],
-    }
-  },
-  pelagos: {
-    add: {
-      "-3": ["Cast Out: denied passage by temple-linked captains; storms/bad timing complications appear 1 extra time per session at sea/coast."],
-      "-2": ["Salt-Warned: disadvantage on Persuasion with Pelagos clergy; services refused."],
-      "-1": ["Untrusted: services cost +50%; temple answers are guarded and clipped."],
-      "1":  ["Tide-Blessing: 1/arc, advantage on one Athletics/Acrobatics check involving water, slick stone, or resisting being moved."],
-      "2":  ["Omen of the Current: 1/arc, reroll one failed Survival/Navigation check (sea, coast, river)."],
-      "3":  ["Safe Passage: 1/arc, avoid one sea travel complication entirely (storm, pursuit, ship damage) if plausible."],
-    }
-  }
+// Temple boons
+const templeBoons = {
+  telluria: [
+    { when: (s) => s >= 1, text: "FACTION BOON (Telluria): Advantage on one STR/CON save per session." },
+    { when: (s) => s >= 3, text: "FACTION BOON (Telluria): Ignore one environmental hazard." },
+  ],
+  aurush: [
+    { when: (s) => s >= 1, text: "FACTION BOON (Aurush): Add +1 radiant damage once per session." },
+    { when: (s) => s >= 3, text: "FACTION BOON (Aurush): Advantage vs fear/charm in one encounter." },
+  ],
+  pelagos: [
+    { when: (s) => s >= 1, text: "FACTION BOON (Pelagos): Advantage on one water movement check." },
+    { when: (s) => s >= 3, text: "FACTION BOON (Pelagos): Negate one sea travel complication." },
+  ],
 };
 
 /* ---------------------------
@@ -297,55 +354,64 @@ function cumulativeKeysForScore(score, min, max){
 }
 
 function getClanStatus(score){
-  const key = String(score);
-  return (clanUniversal[key]?.status) || "UNKNOWN";
+  const band = String(clanBand(score));
+  return clanUniversal[band]?.status || "UNKNOWN";
 }
 
 function getTempleStatus(score){
-  const key = String(score);
-  return (templeUniversal[key]?.status) || "UNKNOWN";
+  const band = String(templeBand(score));
+  return templeUniversal[band]?.status || "UNKNOWN";
 }
 
 function getClanActiveEffects(clanId, score){
-  const scoreKeys = cumulativeKeysForScore(score, -5, 5);
+  const band = String(clanBand(score));
   const effects = [];
 
-  // universal (cumulative)
-  scoreKeys.forEach(k => {
-    const block = clanUniversal[k];
-    if(block?.effects) effects.push(...block.effects);
-  });
+  // Universal band effects (not cumulative)
+  const base = clanUniversal[band]?.effects || [];
+  effects.push(...base);
 
-  // modifiers (threshold adds)
-  const mod = clanModifiers[clanId];
-  if(mod){
-    // add for exact thresholds (cumulative using the same scoreKeys list)
-    scoreKeys.forEach(k => {
-      const add = mod.add?.[k];
-      if(add) effects.push(...add);
-    });
+  // Clan boon track (only one track per clan)
+  const track = clanBoonTracks[clanId];
+  if(track){
+    // choose all matching steps, but only show the MOST POWERFUL one for that side
+    // negative side: show the <= -3 penalty if relevant
+    // positive side: show the highest unlocked boon (+1/+3/+5)
+    let negative = null;
+    let positive = null;
 
-    // “at or below” negative thresholds
-    // if score is <= threshold, include those notes
-    Object.keys(mod.addIfAtOrBelow || {}).forEach(th => {
-      const thNum = Number(th);
-      if(Number.isFinite(thNum) && score <= thNum){
-        effects.push(...mod.addIfAtOrBelow[th]);
+    for(const step of track.steps){
+      if(step.when(score)){
+        if(score <= -3) negative = step.text;
+        if(score >= 1)  positive = step.text;
       }
-    });
+    }
+
+    if(negative) effects.push(`${track.label}: ${negative}`);
+    if(positive) effects.push(`${track.label}: ${positive}`);
   }
 
   return dedupe(effects);
 }
 
 function getTempleActiveEffects(templeId, score){
-  const scoreKeys = cumulativeKeysForScore(score, -3, 3);
+  const band = String(templeBand(score));
   const effects = [];
 
-  scoreKeys.forEach(k => {
-    const block = templeUniversal[k];
-    if(block?.effects) effects.push(...block.effects);
-  });
+  // Universal band effects (not cumulative)
+  const base = templeUniversal[band]?.effects || [];
+  effects.push(...base);
+
+  // Temple boons (show highest unlocked)
+  const boons = templeBoons[templeId] || [];
+  let best = null;
+  for(const b of boons){
+    if(b.when(score)) best = b.text;
+  }
+  if(best) effects.push(best);
+
+  return dedupe(effects);
+}
 
   const mod = templeModifiers[templeId];
   if(mod){
