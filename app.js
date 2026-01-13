@@ -25,13 +25,13 @@ const temples = [
 // IMPORTANT: only 3 clans have extra rules in your doc (Blackstone/Farmer/Rowthorn).
 // The others will still use the universal clan effects until you add their custom modifiers.
 const clans = [
-  { id: "blackstone", name: "Clan Blackstone", icon: "🛡️🐻", alignedTemple: "telluria", hasModifiers: true },
-  { id: "bacca",      name: "Clan Bacca",      icon: "🛡️🦁", alignedTemple: "telluria", hasModifiers: false },
-  { id: "farmer",     name: "Clan Farmer",     icon: "🛡️🐂", alignedTemple: "aurush",   hasModifiers: true },
-  { id: "slade",      name: "Clan Slade",      icon: "🛡️🦄", alignedTemple: "telluria", hasModifiers: false },
-  { id: "molten",     name: "Clan Molten",     icon: "🛡️🦅", alignedTemple: "aurush",   hasModifiers: false },
-  { id: "karr",       name: "Clan Karr",       icon: "🛡️🐐", alignedTemple: "pelagos",  hasModifiers: false },
-  { id: "rowthorn",   name: "Clan Rowthorn",   icon: "🛡️🐉", alignedTemple: "pelagos",  hasModifiers: true },
+  { id: "blackstone", name: "Clan Blackstone", alignedTemple: "telluria", hasModifiers: true,  iconImg: "./assets/Blackstone%20Sigil.png" },
+  { id: "bacca",      name: "Clan Bacca",      alignedTemple: "telluria", hasModifiers: false, iconImg: "./assets/Bacca%20Sigil.png" },
+  { id: "farmer",     name: "Clan Farmer",     alignedTemple: "aurush",   hasModifiers: true,  iconImg: "./assets/Farmer%20Sigil.png" },
+  { id: "slade",      name: "Clan Slade",      alignedTemple: "telluria", hasModifiers: false, iconImg: "./assets/Slade%20Sigil.png" },
+  { id: "molten",     name: "Clan Molten",     alignedTemple: "aurush",   hasModifiers: false, iconImg: "./assets/Molten%20Sigil.png" },
+  { id: "karr",       name: "Clan Karr",       alignedTemple: "pelagos",  hasModifiers: false, iconImg: "./assets/Karr%20Sigil.png" },
+  { id: "rowthorn",   name: "Clan Rowthorn",   alignedTemple: "pelagos",  hasModifiers: true,  iconImg: "./assets/Rowthorn%20Sigil.png" },
 ];
 
 
@@ -495,7 +495,9 @@ function renderClans(){
 
     const icon = document.createElement("div");
     icon.className = "icon";
-    icon.textContent = clan.icon;
+    icon.innerHTML = clan.iconImg
+  ? `<img src="${clan.iconImg}" alt="${escapeHtml(clan.name)} sigil" class="crest">`
+  : "🛡️";
 
     const text = document.createElement("div");
     text.className = "factionText";
