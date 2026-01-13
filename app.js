@@ -7,7 +7,7 @@
 
 const STORAGE_KEY = "scarlettHonourTracker.v1";
 
-const ASSET_VER = "v2";
+const ASSET_VER = "v3";
 
 const el = (id) => document.getElementById(id);
 const clamp = (n, min, max) => Math.max(min, Math.min(max, n));
