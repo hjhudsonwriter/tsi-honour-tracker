@@ -413,17 +413,6 @@ function getTempleActiveEffects(templeId, score){
   return dedupe(effects);
 }
 
-  const mod = templeModifiers[templeId];
-  if(mod){
-    scoreKeys.forEach(k => {
-      const add = mod.add?.[k];
-      if(add) effects.push(...add);
-    });
-  }
-
-  return dedupe(effects);
-}
-
 function dedupe(arr){
   const seen = new Set();
   const out = [];
