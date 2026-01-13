@@ -18,9 +18,21 @@ const clamp = (n, min, max) => Math.max(min, Math.min(max, n));
 
 // Temples
 const temples = [
-  { id: "telluria", name: "Telluria", icon: "🜃" }, // earth
-  { id: "aurush",   name: "Aurush",   icon: "☀" }, // sun
-  { id: "pelagos",  name: "Pelagos",  icon: "🌊" }, // sea
+  {
+    id: "telluria",
+    name: "Telluria",
+    iconImg: `assets/icons/Telluriacrest.png?v=${ASSET_VER}`
+  },
+  {
+    id: "aurush",
+    name: "Aurush",
+    iconImg: `assets/icons/Aurushcrest.png?v=${ASSET_VER}`
+  },
+  {
+    id: "pelagos",
+    name: "Pelagos",
+    iconImg: `assets/icons/Pelagoscrest.png?v=${ASSET_VER}`
+  },
 ];
 
 // Clans
@@ -604,7 +616,9 @@ function renderTemples(){
 
     const icon = document.createElement("div");
     icon.className = "icon";
-    icon.textContent = t.icon;
+    icon.innerHTML = t.iconImg
+  ? `<img src="${t.iconImg}" alt="${escapeHtml(t.name)} crest" class="crest">`
+  : "⛩️";
 
     const text = document.createElement("div");
     text.className = "factionText";
