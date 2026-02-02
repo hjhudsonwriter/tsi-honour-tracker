@@ -1,9 +1,97 @@
 /* Scarlett Isles — Honour & Respect Tracker
    - Clans: -5..+5
    - Temples: -3..+3
-   - Auto-saves to localStorage
+   - Auto-saves to localStorage AND Firebase (for cross-device sync)
    - Displays cumulative active effects based on your reference document
 */
+
+// ===================================
+// FIREBASE CONFIGURATION
+// ===================================
+
+// Using the same Firebase project as Knightly Treasures shop
+const firebaseConfig = {
+    apiKey: "AIzaSyCAtLDqghTbYhyhwcoTsefTiMecC30RMuQ",
+    authDomain: "scarlett-isles-companion.firebaseapp.com",
+    projectId: "scarlett-isles-companion",
+    storageBucket: "scarlett-isles-companion.firebasestorage.app",
+    messagingSenderId: "269614761446",
+    appId: "1:269614761446:web:d420e1198e62b68a474227",
+    databaseURL: "https://scarlett-isles-companion-default-rtdb.firebaseio.com"
+};
+
+let firebaseApp, firebaseDb;
+let firebaseEnabled = false;
+
+// Firebase will be initialized after the SDK loads
+function initFirebase() {
+    try {
+        firebaseApp = firebase.initializeApp(firebaseConfig);
+        firebaseDb = firebase.database();
+        firebaseEnabled = true;
+        console.log('Firebase initialized successfully');
+        
+        // Setup real-time listener for honour data
+        setupFirebaseListener();
+    } catch (error) {
+        console.warn('Firebase initialization failed, using localStorage only:', error);
+        firebaseEnabled = false;
+    }
+}
+
+function setupFirebaseListener() {
+    if (!firebaseEnabled) return;
+    
+    const honourRef = firebaseDb.ref('honour');
+    honourRef.on('value', (snapshot) => {
+        const remoteData = snapshot.val();
+        if (remoteData && remoteData.updatedAt) {
+            // Only update if remote data is newer than local
+            const localTime = new Date(state.updatedAt || 0).getTime();
+            const remoteTime = new Date(remoteData.updatedAt || 0).getTime();
+            
+            if (remoteTime > localTime) {
+                console.log('Received newer data from Firebase, updating local state');
+                Object.assign(state, remoteData);
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+                render();
+                pulseSynced();
+            }
+        }
+    }, (error) => {
+        console.warn('Firebase listener error:', error);
+    });
+}
+
+async function saveToFirebase() {
+    if (!firebaseEnabled) return;
+    
+    try {
+        await firebaseDb.ref('honour').set(state);
+        console.log('Saved to Firebase');
+    } catch (error) {
+        console.warn('Failed to save to Firebase:', error);
+    }
+}
+
+async function loadFromFirebase() {
+    if (!firebaseEnabled) return null;
+    
+    try {
+        const snapshot = await firebaseDb.ref('honour').get();
+        if (snapshot.exists()) {
+            console.log('Loaded honour data from Firebase');
+            return snapshot.val();
+        }
+    } catch (error) {
+        console.warn('Failed to load from Firebase:', error);
+    }
+    return null;
+}
+
+// ===================================
+// ORIGINAL CODE CONTINUES
+// ===================================
 
 const STORAGE_KEY = "scarlettHonourTracker.v1";
 
@@ -333,6 +421,9 @@ function saveState(){
   state.updatedAt = new Date().toISOString();
   localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
   pulseSaved();
+  
+  // Also save to Firebase for cross-device sync
+  saveToFirebase();
 }
 
 let savePulseTimer = null;
@@ -347,6 +438,21 @@ function pulseSaved(){
     pill.style.borderColor = "rgba(201,162,39,.26)";
     pill.style.background = "rgba(201,162,39,.12)";
   }, 400);
+}
+
+let syncPulseTimer = null;
+function pulseSynced(){
+  const pill = el("savePill");
+  if(!pill) return;
+  pill.textContent = "Synced";
+  pill.style.borderColor = "rgba(100,180,100,.45)";
+  pill.style.background = "rgba(100,180,100,.16)";
+  clearTimeout(syncPulseTimer);
+  syncPulseTimer = setTimeout(() => {
+    pill.style.borderColor = "rgba(201,162,39,.26)";
+    pill.style.background = "rgba(201,162,39,.12)";
+    pill.textContent = "Saved";
+  }, 1500);
 }
 
 /* ---------------------------
@@ -763,4 +869,8 @@ el("importFile").addEventListener("change", async () => {
    7) BOOT
 ---------------------------- */
 
+// Initial render with local data
 render();
+
+// Initialize Firebase (will sync if newer data exists online)
+initFirebase();
